@@ -189,21 +189,21 @@ static int __devinit sdhci_dove_probe(struct platform_device *pdev)
 	host = platform_get_drvdata(pdev);
 	pltfm_host = sdhci_priv(host);
 	plat = pdev->dev.platform_data;
-	if (plat->sdhci_wa) {
-		sdhci_dove_pdata.ops->enable_sdio_irq = enable_sdio_gpio_irq;
-		ret = devm_request_irq(&pdev->dev, plat->sdhci_wa->irq,
-				sdhci_dove_gpio_irq, IRQF_TRIGGER_LOW,
-				mmc_hostname(host->mmc), host);
-		if (ret) {
-			dev_err(&pdev->dev, "cannot request wa irq\n");
-			goto dove_probe_err_irq;
-		}
-		disable_irq_nosync(plat->sdhci_wa->irq);
-	}
-
 	pltfm_host->priv = plat;
 
 	if (plat) {
+		if (plat->sdhci_wa) {
+			sdhci_dove_pdata.ops->enable_sdio_irq = enable_sdio_gpio_irq;
+			ret = devm_request_irq(&pdev->dev, plat->sdhci_wa->irq,
+					sdhci_dove_gpio_irq, IRQF_TRIGGER_LOW,
+					mmc_hostname(host->mmc), host);
+			if (ret) {
+				dev_err(&pdev->dev, "cannot request wa irq\n");
+				goto dove_probe_err_irq;
+			}
+			disable_irq_nosync(plat->sdhci_wa->irq);
+		}
+
 		/* Not all platforms can gate the clock, so it is not
 		   an error if the clock does not exists. */
 		plat->clk = clk_get(&pdev->dev, NULL);

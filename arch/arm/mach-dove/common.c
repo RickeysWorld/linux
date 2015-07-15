@@ -614,7 +614,7 @@ static struct platform_device dove_pcm0_device = {
 	.id             = 0,
 };
 
-#ifdef CONFIG_KIRKWOOD_SPDIF_I2S_SEL
+#ifdef CONFIG_SND_KIRKWOOD_SOC_MODE_SEL
 void __init dove_i2s0_init(void)
 {
 	platform_device_register(&dove_i2s0_device);
